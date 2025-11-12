@@ -688,11 +688,12 @@ class ConjugateDisplay:
                         masdar = result.text.get("المصدر", "—")
                         
                         # Get verb conjugations (3rd person masculine singular where applicable)
-                        passive_perfect = result.tab_conjug.get("ماضي مجهول", {}).get("هُوَ", "—")
-                        passive_imperfect = result.tab_conjug.get("مضارع مجهول", {}).get("هُوَ", "—")
-                        imperative = result.tab_conjug.get("أمر", {}).get("أَنْتَ", "—")
-                        active_imperfect = result.tab_conjug.get("مضارع", {}).get("هُوَ", "—")
-                        active_perfect = result.tab_conjug.get("ماضي", {}).get("هُوَ", verb_form)
+                        # Use correct tense keys from verb_const
+                        passive_perfect = result.tab_conjug.get("الماضي المجهول", {}).get("هو", "—")
+                        passive_imperfect = result.tab_conjug.get("المضارع المجهول", {}).get("هو", "—")
+                        imperative = result.tab_conjug.get("الأمر", {}).get("أنت", "—")
+                        active_imperfect = result.tab_conjug.get("المضارع المعلوم", {}).get("هو", "—")
+                        active_perfect = result.tab_conjug.get("الماضي المعلوم", {}).get("هو", verb_form)
                     else:
                         # Fallback if structure is different
                         noun_place_time = "—"

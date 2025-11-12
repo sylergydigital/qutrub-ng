@@ -257,11 +257,12 @@ def get_comprehensive_forms_data(word, future_type="ضمة", transitive=False):
                     form_data["Masdar"] = result.text.get("المصدر", "—")
                     
                     # Get verb conjugations (3rd person masculine singular where applicable)
-                    form_data["Passive_Perfect"] = result.tab_conjug.get("ماضي مجهول", {}).get("هُوَ", "—")
-                    form_data["Passive_Imperfect"] = result.tab_conjug.get("مضارع مجهول", {}).get("هُوَ", "—")
-                    form_data["Imperative"] = result.tab_conjug.get("أمر", {}).get("أَنْتَ", "—")
-                    form_data["Active_Imperfect"] = result.tab_conjug.get("مضارع", {}).get("هُوَ", "—")
-                    form_data["Active_Perfect"] = result.tab_conjug.get("ماضي", {}).get("هُوَ", verb_form)
+                    # Use correct tense keys from verb_const
+                    form_data["Passive_Perfect"] = result.tab_conjug.get("الماضي المجهول", {}).get("هو", "—")
+                    form_data["Passive_Imperfect"] = result.tab_conjug.get("المضارع المجهول", {}).get("هو", "—")
+                    form_data["Imperative"] = result.tab_conjug.get("الأمر", {}).get("أنت", "—")
+                    form_data["Active_Imperfect"] = result.tab_conjug.get("المضارع المعلوم", {}).get("هو", "—")
+                    form_data["Active_Perfect"] = result.tab_conjug.get("الماضي المعلوم", {}).get("هو", verb_form)
                 else:
                     # Fallback if structure is different
                     form_data["Noun_Place_Time"] = "—"
