@@ -252,14 +252,18 @@ def get_comprehensive_forms_data(word, future_type="ضمة", transitive=False):
                 if result and hasattr(result, 'text') and hasattr(result, 'tab_conjug'):
                     # DEBUG: Log available keys (only for first form)
                     if form_num == 1:
-                        import sys
-                        print(f"\n=== DEBUG: Available keys in result ===", file=sys.stderr)
-                        print(f"text keys: {list(result.text.keys())[:10]}", file=sys.stderr)
-                        print(f"tab_conjug keys: {list(result.tab_conjug.keys())}", file=sys.stderr)
+                        print(f"\n{'='*60}")
+                        print(f"🔍 DEBUG: Data structure for Form {form_num}")
+                        print(f"{'='*60}")
+                        print(f"📌 Available text.keys (noun derivatives):")
+                        print(f"   {list(result.text.keys())[:15]}")
+                        print(f"\n📌 Available tab_conjug.keys (tenses):")
+                        print(f"   {list(result.tab_conjug.keys())}")
                         if result.tab_conjug:
                             first_tense = list(result.tab_conjug.keys())[0]
-                            print(f"Pronouns in '{first_tense}': {list(result.tab_conjug[first_tense].keys())}", file=sys.stderr)
-                        print(f"======================================\n", file=sys.stderr)
+                            print(f"\n📌 Available pronouns in '{first_tense}':")
+                            print(f"   {list(result.tab_conjug[first_tense].keys())}")
+                        print(f"{'='*60}\n")
                     
                     # Extract noun derivatives
                     form_data["Noun_Place_Time"] = result.text.get("اسم المكان", "—")
