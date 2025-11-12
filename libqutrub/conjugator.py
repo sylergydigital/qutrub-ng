@@ -249,37 +249,24 @@ def get_comprehensive_forms_data(word, future_type="ضمة", transitive=False):
                 result = mosaref_main.do_sarf(verb_form, future_type, alltense=True,
                                                transitive=False, display_format="DICT")
                 
-                if result and hasattr(result, 'text') and hasattr(result, 'tab_conjug'):
-                    # DEBUG: Log available keys (only for first form)
-                    if form_num == 1:
-                        print(f"\n{'='*60}")
-                        print(f"🔍 DEBUG: Data structure for Form {form_num}")
-                        print(f"{'='*60}")
-                        print(f"📌 Available text.keys (noun derivatives):")
-                        print(f"   {list(result.text.keys())[:15]}")
-                        print(f"\n📌 Available tab_conjug.keys (tenses):")
-                        print(f"   {list(result.tab_conjug.keys())}")
-                        if result.tab_conjug:
-                            first_tense = list(result.tab_conjug.keys())[0]
-                            print(f"\n📌 Available pronouns in '{first_tense}':")
-                            print(f"   {list(result.tab_conjug[first_tense].keys())}")
-                        print(f"{'='*60}\n")
+                # The result is a dict mapping tense names to pronoun->conjugation dicts
+                if result and isinstance(result, dict):
+                    # Get verb conjugations from the dict
+                    form_data["Passive_Perfect"] = result.get("الماضي المجهول", {}).get("هو", "—")
+                    form_data["Passive_Imperfect"] = result.get("المضارع المجهول", {}).get("هو", "—")
+                    form_data["Imperative"] = result.get("الأمر", {}).get("أنت", "—")
+                    form_data["Active_Imperfect"] = result.get("المضارع المعلوم", {}).get("هو", "—")
+                    form_data["Active_Perfect"] = result.get("الماضي المعلوم", {}).get("هو", verb_form)
                     
-                    # Extract noun derivatives
-                    form_data["Noun_Place_Time"] = result.text.get("اسم المكان", "—")
-                    form_data["Passive_Participle"] = result.text.get("اسم المفعول", "—")
-                    form_data["Active_Participle"] = result.text.get("اسم الفاعل", "—")
-                    form_data["Masdar"] = result.text.get("المصدر", "—")
-                    
-                    # Get verb conjugations (3rd person masculine singular where applicable)
-                    # Use correct tense keys from verb_const
-                    form_data["Passive_Perfect"] = result.tab_conjug.get("الماضي المجهول", {}).get("هو", "—")
-                    form_data["Passive_Imperfect"] = result.tab_conjug.get("المضارع المجهول", {}).get("هو", "—")
-                    form_data["Imperative"] = result.tab_conjug.get("الأمر", {}).get("أنت", "—")
-                    form_data["Active_Imperfect"] = result.tab_conjug.get("المضارع المعلوم", {}).get("هو", "—")
-                    form_data["Active_Perfect"] = result.tab_conjug.get("الماضي المعلوم", {}).get("هو", verb_form)
+                    # Noun derivatives (masdar, participles, etc.) are not in the DICT result
+                    # TODO: Implement proper noun extraction
+                    form_data["Masdar"] = "—"
+                    form_data["Noun_Place_Time"] = "—"
+                    form_data["Active_Participle"] = "—"
+                    form_data["Passive_Participle"] = "—"
+                        
                 else:
-                    # Fallback if structure is different
+                    # Fallback if result is invalid
                     form_data["Noun_Place_Time"] = "—"
                     form_data["Passive_Participle"] = "—"
                     form_data["Active_Participle"] = "—"

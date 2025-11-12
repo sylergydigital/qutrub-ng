@@ -680,20 +680,33 @@ class ConjugateDisplay:
                     result = mosaref_main.do_sarf(verb_form, future_type, alltense=True,
                                                    transitive=False, display_format="DICT")
                     
-                    if result and hasattr(result, 'text') and hasattr(result, 'tab_conjug'):
-                        # Extract noun derivatives
-                        noun_place_time = result.text.get("اسم المكان", "—")
-                        passive_participle = result.text.get("اسم المفعول", "—")
-                        active_participle = result.text.get("اسم الفاعل", "—")
-                        masdar = result.text.get("المصدر", "—")
+                    # The result is a dict mapping tense names to pronoun->conjugation dicts
+                    if result and isinstance(result, dict):
+                        # Get verb conjugations from the dict
+                        passive_perfect = result.get("الماضي المجهول", {}).get("هو", "—")
+                        passive_imperfect = result.get("المضارع المجهول", {}).get("هو", "—")
+                        imperative = result.get("الأمر", {}).get("أنت", "—")
+                        active_imperfect = result.get("المضارع المعلوم", {}).get("هو", "—")
+                        active_perfect = result.get("الماضي المعلوم", {}).get("هو", verb_form)
                         
-                        # Get verb conjugations (3rd person masculine singular where applicable)
-                        # Use correct tense keys from verb_const
-                        passive_perfect = result.tab_conjug.get("الماضي المجهول", {}).get("هو", "—")
-                        passive_imperfect = result.tab_conjug.get("المضارع المجهول", {}).get("هو", "—")
-                        imperative = result.tab_conjug.get("الأمر", {}).get("أنت", "—")
-                        active_imperfect = result.tab_conjug.get("المضارع المعلوم", {}).get("هو", "—")
-                        active_perfect = result.tab_conjug.get("الماضي المعلوم", {}).get("هو", verb_form)
+                        # For nouns, use classnoun
+                        from . import classnoun
+                        from . import ar_verb
+                        from . import verb_const
+                        future_type_code = ar_verb.get_future_type_by_name(future_type)
+                        noun_obj = classnoun.NounClass(verb_form, False, future_type_code)
+                        
+                        # Get active and passive participles
+                        try:
+                            active_participle = noun_obj.conjugate_noun(verb_const.SubjectNoun)
+                            passive_participle = noun_obj.conjugate_noun(verb_const.ObjectNoun)
+                        except:
+                            active_participle = "—"
+                            passive_participle = "—"
+                        
+                        # Placeholders for now
+                        noun_place_time = "—"
+                        masdar = "—"
                     else:
                         # Fallback if structure is different
                         noun_place_time = "—"
