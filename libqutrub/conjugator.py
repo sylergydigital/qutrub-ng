@@ -250,6 +250,17 @@ def get_comprehensive_forms_data(word, future_type="ضمة", transitive=False):
                                                transitive=False, display_format="DICT")
                 
                 if result and hasattr(result, 'text') and hasattr(result, 'tab_conjug'):
+                    # DEBUG: Log available keys (only for first form)
+                    if form_num == 1:
+                        import sys
+                        print(f"\n=== DEBUG: Available keys in result ===", file=sys.stderr)
+                        print(f"text keys: {list(result.text.keys())[:10]}", file=sys.stderr)
+                        print(f"tab_conjug keys: {list(result.tab_conjug.keys())}", file=sys.stderr)
+                        if result.tab_conjug:
+                            first_tense = list(result.tab_conjug.keys())[0]
+                            print(f"Pronouns in '{first_tense}': {list(result.tab_conjug[first_tense].keys())}", file=sys.stderr)
+                        print(f"======================================\n", file=sys.stderr)
+                    
                     # Extract noun derivatives
                     form_data["Noun_Place_Time"] = result.text.get("اسم المكان", "—")
                     form_data["Passive_Participle"] = result.text.get("اسم المفعول", "—")
